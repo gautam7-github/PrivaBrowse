@@ -112,6 +112,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               IconButton(
                 onPressed: () {
+                  HapticFeedback.mediumImpact();
                   setState(() {
                     webViewController!.loadUrl(
                       urlRequest: URLRequest(
@@ -133,6 +134,7 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.only(right: 10.0),
                   child: TextField(
                     onTap: () {
+                      HapticFeedback.lightImpact();
                       setState(
                         () {
                           urlController.clear();
@@ -170,6 +172,7 @@ class _HomePageState extends State<HomePage> {
               ),
               IconButton(
                 onPressed: () {
+                  HapticFeedback.mediumImpact();
                   showDialog(
                     context: context,
                     builder: (_) => AlertDialog(
@@ -188,6 +191,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           IconButton(
                             onPressed: () async {
+                              HapticFeedback.vibrate();
                               var bb = await webViewController!.canGoBack();
                               if (bb) {
                                 webViewController!.goBack();
@@ -198,6 +202,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           IconButton(
                             onPressed: () {
+                              HapticFeedback.vibrate();
                               webViewController!.reload();
                               Navigator.of(context).pop();
                             },
@@ -205,6 +210,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           IconButton(
                             onPressed: () async {
+                              HapticFeedback.vibrate();
                               var ff = await webViewController!.canGoForward();
                               if (ff) {
                                 webViewController!.goForward();
