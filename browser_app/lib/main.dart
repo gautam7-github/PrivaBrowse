@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "PrivaBrowse",
       theme: ThemeData.dark().copyWith(
         accentColor: Colors.purple,
         scaffoldBackgroundColor: Colors.white,
