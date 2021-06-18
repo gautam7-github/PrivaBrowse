@@ -1,4 +1,4 @@
-# MinBrowse
+# PrivaBrowse
 ## Privacy Focused.
 ## Open Source
 ## Light Weight
