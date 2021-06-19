@@ -26,14 +26,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        bottomSheet: null,
-        bottomNavigationBar: null,
-        resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: HomePage(),
-        ),
-      ),
+      home: HomePage(),
     );
   }
 }

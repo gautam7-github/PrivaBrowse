@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -30,8 +31,8 @@ class _HomePageState extends State<HomePage> {
     ),
   );
   String? currentURL;
-  final secureIcon = Icon(Icons.lock);
-  final insecureIcon = Icon(Icons.lock_open);
+  final secureIcon = Icon(Icons.lock_outline_rounded);
+  final insecureIcon = Icon(Icons.lock_open_rounded);
   bool? isSecure = true;
   void showControllerDialog() {}
 
@@ -53,6 +54,7 @@ class _HomePageState extends State<HomePage> {
       url = Uri.https(url.toString(), "/");
       print(url);
     }
+    this.currentURL = url.toString();
     await webViewController?.loadUrl(
       urlRequest: URLRequest(url: url),
     );
@@ -84,16 +86,58 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: [
-          topBar(context),
-          progress < 1.00
-              ? LinearProgressIndicator(value: progress, color: Colors.blue)
-              : Container(),
-          webPage(context),
-        ],
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: [
+              topBar(context),
+              progress < 1.00
+                  ? LinearProgressIndicator(value: progress, color: Colors.blue)
+                  : Container(),
+              webPage(context),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.black,
+        child: Container(
+          height: kTextTabBarHeight,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              IconButton(
+                onPressed: () async {
+                  var bb = await webViewController!.canGoBack();
+                  if (bb) {
+                    webViewController!.goBack();
+                  }
+                },
+                icon: Icon(Icons.chevron_left_rounded),
+              ),
+              IconButton(
+                onPressed: () async {
+                  await Share.share(currentURL.toString());
+                },
+                icon: Icon(Icons.share_rounded),
+              ),
+              IconButton(
+                onPressed: () async {
+                  var ff = await webViewController!.canGoForward();
+                  if (ff) {
+                    webViewController!.goForward();
+                  }
+                },
+                icon: Icon(Icons.chevron_right_rounded),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -173,59 +217,11 @@ class _HomePageState extends State<HomePage> {
               IconButton(
                 onPressed: () {
                   HapticFeedback.mediumImpact();
-                  showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      backgroundColor: Colors.black,
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(
-                            16,
-                          ),
-                        ),
-                      ),
-                      content: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            onPressed: () async {
-                              HapticFeedback.vibrate();
-                              var bb = await webViewController!.canGoBack();
-                              if (bb) {
-                                webViewController!.goBack();
-                              }
-                              Navigator.of(context).pop();
-                            },
-                            icon: Icon(Icons.chevron_left_rounded),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              HapticFeedback.vibrate();
-                              webViewController!.reload();
-                              Navigator.of(context).pop();
-                            },
-                            icon: Icon(Icons.refresh_rounded),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              HapticFeedback.vibrate();
-                              var ff = await webViewController!.canGoForward();
-                              if (ff) {
-                                webViewController!.goForward();
-                              }
-                              Navigator.of(context).pop();
-                            },
-                            icon: Icon(Icons.chevron_right_rounded),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                  exit(0);
                 },
                 icon: Icon(
-                  Icons.more_vert_rounded,
+                  Icons.close_rounded,
                   size: 28,
                   color: Colors.white,
                 ),
@@ -278,6 +274,59 @@ class _HomePageState extends State<HomePage> {
               },
             );
           },
+        ),
+      ),
+    );
+  }
+
+  void something() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.black,
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(
+              16,
+            ),
+          ),
+        ),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IconButton(
+              onPressed: () async {
+                HapticFeedback.vibrate();
+                var bb = await webViewController!.canGoBack();
+                if (bb) {
+                  webViewController!.goBack();
+                }
+                Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.chevron_left_rounded),
+            ),
+            IconButton(
+              onPressed: () {
+                HapticFeedback.vibrate();
+                webViewController!.reload();
+                Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.refresh_rounded),
+            ),
+            IconButton(
+              onPressed: () async {
+                HapticFeedback.vibrate();
+                var ff = await webViewController!.canGoForward();
+                if (ff) {
+                  webViewController!.goForward();
+                }
+                Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.chevron_right_rounded),
+            ),
+          ],
         ),
       ),
     );
